@@ -9,10 +9,6 @@ on_button = Button(23)
 capture_button = Button(25)
 next_filter = Button(27)
 
-on_button.when_pressed = videofeed_on()
-capture_button.when_pressed = take_picture()
-next_filter.when_pressed = next_filter()
-
 ''' initialize the camera and grab a reference 
 to the raw camera capture'''
 camera = PiCamera()
@@ -27,6 +23,8 @@ time.sleep(0.1)
 #there is also a video preview in the camera variable to show live feed
 def videofeed_on():
     print "videofeed on"
+    print on_button
+    print on_button.when_pressed
 
     # capture frames from the camera
     for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
@@ -60,3 +58,8 @@ def take_picture():
 
 def next_filter():
     print "add next filter"
+
+
+on_button.when_pressed = videofeed_on()
+capture_button.when_pressed = take_picture()
+next_filter.when_pressed = next_filter()
