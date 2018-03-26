@@ -13,7 +13,7 @@ GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(20, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 on_button = GPIO.input(18)
-capture_button = GPIO.input(20)
+#capture_button = GPIO.input(20)
 
 ''' initialize the camera and grab a reference 
 to the raw camera capture'''
@@ -22,7 +22,7 @@ camera.resolution = (640, 480)
 camera.framerate = 32
 rawCapture = PiRGBArray(camera, size=(640, 480))
 # edit this to point to an actual location
-url = "home/desktop"
+url = "/home/pi/Documents/rpi-photobooth/pictures"
 output = strftime(url + "/image-%d-%m %H:%M.png", gmtime())
 
 # allow the camera to warmup
@@ -47,9 +47,13 @@ def videofeed_on():
         # clear the stream in preparation for the next frame
         rawCapture.truncate(0)
 
+        '''
         # if the `q` key was pressed, break from the loop
         if key == ord("q"):
             break
+        '''
+        capture_button = GPIO.input(20);
+        if capture_button == False: break
 
 def take_picture():
     print "picture should be captured"
@@ -63,24 +67,35 @@ def take_picture():
     # display the image on screen and wait for a keypress
     cv2.imshow("Image", image)
     cv2.waitKey(0)
-
+    on_button = GPIO.input(18)
+    
+    if on_button == False:
+        videofeed_on()
 
 def next_filter():
     print "add next filter"
 
-while on_button:
-    on_button = GPIO.input(18)
+def main():
+    while on_button:
+        on_button = GPIO.input(18)
     
-if on_button == False:
-    print('Button Pressed')
-    videofeed_on();
-    time.sleep(0.2)
+    if on_button == False:
+        print('Button Pressed')
+        videofeed_on()
+        time.sleep(0.2)
+        take_picture()
+
+
+    '''
     while take_picture:
+        print "Hello"
         take_picture = GPIO.input(20)
+    
 
 if take_picture == False:
     take_picture()
     time.sleep(0.2)
+'''
 
 
 
