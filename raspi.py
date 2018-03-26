@@ -9,19 +9,10 @@ import time
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 on_button = GPIO.input(18)
-
-# while True:
-#     input_state = GPIO.input(18)
-#     if input_state == False:
-#         print('Button Pressed')
-#         time.sleep(0.2)
-
-
-# on_button = Button(23)
-# capture_button = Button(25)
-# next_filter = Button(27)
+capture_button = GPIO.input(20)
 
 ''' initialize the camera and grab a reference 
 to the raw camera capture'''
@@ -78,8 +69,18 @@ if on_button == False:
     print('Button Pressed')
     videofeed_on();
     time.sleep(0.2)
+    while take_picture:
+        take_picture = GPIO.input(20)
+
+if take_picture == False:
+    take_picture()
+    time.sleep(0.2)
+
+
+
+
 
 
 #on_button.when_pressed = videofeed_on()
-capture_button.when_pressed = take_picture()
-next_filter.when_pressed = next_filter()
+# capture_button.when_pressed = take_picture()
+# next_filter.when_pressed = next_filter()
