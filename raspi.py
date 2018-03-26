@@ -66,24 +66,27 @@ def take_picture():
      
     # display the image on screen and wait for a keypress
     cv2.imshow("Image", image)
-    cv2.waitKey(0)
-    on_button = GPIO.input(18)
-    
-    if on_button == False:
-        videofeed_on()
+    while capture_button:
+        capture_button = GPIO.input(20)
+
+    # cv2.waitKey(0)
+    # on_button = GPIO.input(18)
+    # if on_button == False:
+    #     videofeed_on()
 
 def next_filter():
     print "add next filter"
 
 def main():
-    while on_button:
-        on_button = GPIO.input(18)
-    
-    if on_button == False:
-        print('Button Pressed')
-        videofeed_on()
-        time.sleep(0.2)
-        take_picture()
+    while True:
+        while on_button:
+            on_button = GPIO.input(18)
+        
+        if on_button == False:
+            print('Button Pressed')
+            videofeed_on()
+            time.sleep(0.2)
+            take_picture()
 
 
     '''
@@ -96,11 +99,6 @@ if take_picture == False:
     take_picture()
     time.sleep(0.2)
 '''
-
-
-
-
-
 
 #on_button.when_pressed = videofeed_on()
 # capture_button.when_pressed = take_picture()
