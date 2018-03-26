@@ -4,10 +4,24 @@ from picamera.array import PiRGBArray
 from picamera import PiCamera
 import time
 import cv2
+import RPi.GPIO as GPIO
+import time
 
-on_button = Button(23)
-capture_button = Button(25)
-next_filter = Button(27)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+on_button = GPIO.input(18)
+
+# while True:
+#     input_state = GPIO.input(18)
+#     if input_state == False:
+#         print('Button Pressed')
+#         time.sleep(0.2)
+
+
+# on_button = Button(23)
+# capture_button = Button(25)
+# next_filter = Button(27)
 
 ''' initialize the camera and grab a reference 
 to the raw camera capture'''
@@ -58,6 +72,13 @@ def take_picture():
 
 def next_filter():
     print "add next filter"
+
+while on_button:
+    on_button = GPIO.input(18)
+    
+if on_button == False:
+    print('Button Pressed')
+    time.sleep(0.2)
 
 
 on_button.when_pressed = videofeed_on()
