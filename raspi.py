@@ -6,6 +6,7 @@ import time
 import cv2
 import RPi.GPIO as GPIO
 import time
+from time import gmtime, strftime
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -20,6 +21,9 @@ camera = PiCamera()
 camera.resolution = (640, 480)
 camera.framerate = 32
 rawCapture = PiRGBArray(camera, size=(640, 480))
+# edit this to point to an actual location
+url = "home/desktop"
+output = strftime(url + "/image-%d-%m %H:%M.png", gmtime())
 
 # allow the camera to warmup
 time.sleep(0.1)
@@ -52,6 +56,8 @@ def take_picture():
 
     # grab an image from the camera
     camera.capture(rawCapture, format="bgr")
+    if output:
+        camera.capture(output)
     image = rawCapture.array
      
     # display the image on screen and wait for a keypress
