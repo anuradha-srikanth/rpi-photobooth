@@ -12,7 +12,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(20, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-on_button = GPIO.input(18)
+#on_button = GPIO.input(18)
 #capture_button = GPIO.input(20)
 
 ''' initialize the camera and grab a reference 
@@ -66,10 +66,16 @@ def take_picture():
      
     # display the image on screen and wait for a keypress
     cv2.imshow("Image", image)
-    while capture_button:
-        capture_button = GPIO.input(20)
-
-    # cv2.waitKey(0)
+    #capture_button = GPIO.input(20)
+    #while capture_button:
+    #    capture_button = GPIO.input(20)
+    # interval = 0
+    cv2.waitKey(10)
+    
+    cv2.waitKey(1)
+    cv2.destroyAllWindows()
+    cv2.waitKey(1)
+    print "Finished waiting"
     # on_button = GPIO.input(18)
     # if on_button == False:
     #     videofeed_on()
@@ -79,17 +85,18 @@ def next_filter():
 
 def main():
     while True:
+        on_button = GPIO.input(18)
         while on_button:
             on_button = GPIO.input(18)
         
         if on_button == False:
             print('Button Pressed')
             videofeed_on()
-            time.sleep(0.2)
+            #time.sleep(0.2)
             take_picture()
 
-
-    '''
+main()
+'''
     while take_picture:
         print "Hello"
         take_picture = GPIO.input(20)
@@ -103,3 +110,4 @@ if take_picture == False:
 #on_button.when_pressed = videofeed_on()
 # capture_button.when_pressed = take_picture()
 # next_filter.when_pressed = next_filter()
+
