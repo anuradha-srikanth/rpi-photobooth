@@ -4,8 +4,9 @@ from picamera.array import PiRGBArray
 from picamera import PiCamera
 import time
 import cv2
+import numpy as np
 import RPi.GPIO as GPIO
-import time
+# import time
 from time import gmtime, strftime
 
 GPIO.setmode(GPIO.BCM)
@@ -33,6 +34,10 @@ time.sleep(0.1)
 def videofeed_on():
     print "videofeed on"
 
+    face_cascade = cv.CascadeClassifier('haarcascade_frontalface_default.xml')
+    eye_cascade = cv.CascadeClassifier('haarcascade_eye.xml')
+    gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+
     # capture frames from the camera
     for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
         # grab the raw NumPy array representing the image, 
@@ -41,7 +46,18 @@ def videofeed_on():
         image = frame.array
 
         # show the frame
+        faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+        for (x,y,w,h) in faces:
+            cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
+            roi_gray = gray[y:y+h, x:x+w]
+            roi_color = img[y:y+h, x:x+w]
+            eyes = eye_cascade.detectMultiScale(roi_gray)
+            for (ex,ey,ew,eh) in eyes:
+                cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
+        
         cv2.imshow("Frame", image)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
         key = cv2.waitKey(1) & 0xFF
 
         # clear the stream in preparation for the next frame
@@ -51,7 +67,7 @@ def videofeed_on():
         # if the `q` key was pressed, break from the loop
         if key == ord("q"):
             break
-        '''
+            '''
         capture_button = GPIO.input(20);
         if capture_button == False: break
 
@@ -62,19 +78,19 @@ def take_picture():
     camera.capture(rawCapture, format="bgr")
     if output:
         camera.capture(output)
-    image = rawCapture.array
-     
+        image = rawCapture.array
+
     # display the image on screen and wait for a keypress
     cv2.imshow("Image", image)
     #capture_button = GPIO.input(20)
     #while capture_button:
     #    capture_button = GPIO.input(20)
     # interval = 0
-    cv2.waitKey(10)
+    cv2.waitKey(10000)
     
-    cv2.waitKey(1)
-    cv2.destroyAllWindows()
-    cv2.waitKey(1)
+    # cv2.waitKey(1)
+    # cv2.destroyAllWindows()
+    # cv2.waitKey(1)
     print "Finished waiting"
     # on_button = GPIO.input(18)
     # if on_button == False:
@@ -88,7 +104,7 @@ def main():
         on_button = GPIO.input(18)
         while on_button:
             on_button = GPIO.input(18)
-        
+
         if on_button == False:
             print('Button Pressed')
             videofeed_on()
@@ -105,7 +121,7 @@ main()
 if take_picture == False:
     take_picture()
     time.sleep(0.2)
-'''
+    '''
 
 #on_button.when_pressed = videofeed_on()
 # capture_button.when_pressed = take_picture()
