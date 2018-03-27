@@ -14,6 +14,7 @@ from time import gmtime, strftime
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(20, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 
 #on_button = GPIO.input(18)
@@ -34,8 +35,9 @@ time.sleep(0.1)
 
 
 #there is also a video preview in the camera variable to show live feed
-def videofeed_on(filter_on = False):
+def videofeed_on():
     print "videofeed on"
+    filter_on = False
 
     face_cascade = cv2.CascadeClassifier('haarcascades/haarcascade_frontalface_default.xml')
     eye_cascade = cv2.CascadeClassifier('haarcascades/haarcascade_eye.xml')
@@ -79,7 +81,8 @@ def videofeed_on(filter_on = False):
         if capture_button == False: break
 
         filter_button = GPIO.input(4)
-        if filter_button == False: videofeed_on(True)
+        if filter_button == False: filter_on = True
+        #videofeed_on(True)
 
 def take_picture():
     print "picture should be captured"
