@@ -9,6 +9,8 @@ import RPi.GPIO as GPIO
 # import time
 from time import gmtime, strftime
 
+
+
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(20, GPIO.IN, pull_up_down=GPIO.PUD_UP)
