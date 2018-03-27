@@ -34,13 +34,50 @@ output = strftime(url + "/image-%d-%m %H:%M.png", gmtime())
 time.sleep(0.1)
 
 
+
+def detectFace(image):
+    face_cascade = cv2.CascadeClassifier('haarcascades/haarcascade_frontalface_default.xml')
+    eye_cascade = cv2.CascadeClassifier('haarcascades/haarcascade_eye.xml')
+            
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # show the frame
+    faces = face_cascade.detectMultiScale(gray, 1.3, 5) 
+    print len(faces)
+    for (x,y,w,h) in faces:
+        cv2.rectangle(image,(x,y),(x+w,y+h),(255,0,0),2)
+        roi_gray = gray[y:y+h, x:x+w]
+        roi_color = image[y:y+h, x:x+w]
+        eyes = eye_cascade.detectMultiScale(roi_gray)
+        line_pts = []
+        ew_pts = []
+        for (ex,ey,ew,eh) in eyes:
+            center = (ex + ew/2, ey + eh/2)
+            axis = (10, 10)
+            angle = 0
+            startAngle = 0
+            endAngle = 360
+            color = (0,255,0)
+            thickness = 2
+            line_pts.append(center)
+            ew_pts.append(ew/2)
+            #cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
+            cv2.ellipse(roi_color, center, axis, angle, startAngle, endAngle, color, thickness)
+
+            if (len(eyes) == 2):
+                color = (0,255,0)
+                if (line_pts[0][0] < line_pts[1][0]):
+                    line_pts[0] = (line_pts[0][0] + ew_pts[0], line_pts[0][1])
+                    line_pts[1] = (line_pts[1][0] - ew_pts[1], line_pts[1][1])
+                else: 
+                    line_pts[1] = (line_pts[1][0] + ew_pts[1], line_pts[1][1])
+                    line_pts[0] = (line_pts[0][0] - ew_pts[0], line_pts[0][1])
+                cv2.line(roi_color, line_pts[0], line_pts[1], color, 4)
+
 #there is also a video preview in the camera variable to show live feed
 def videofeed_on():
     print "videofeed on"
     filter_on = False
-
-    face_cascade = cv2.CascadeClassifier('haarcascades/haarcascade_frontalface_default.xml')
-    eye_cascade = cv2.CascadeClassifier('haarcascades/haarcascade_eye.xml')
 
     # capture frames from the camera
     for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
@@ -51,41 +88,7 @@ def videofeed_on():
         image = frame.array
 
         if filter_on:
-            
-            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-            # show the frame
-            faces = face_cascade.detectMultiScale(gray, 1.3, 5) 
-            print len(faces)
-            for (x,y,w,h) in faces:
-                cv2.rectangle(image,(x,y),(x+w,y+h),(255,0,0),2)
-                roi_gray = gray[y:y+h, x:x+w]
-                roi_color = image[y:y+h, x:x+w]
-                eyes = eye_cascade.detectMultiScale(roi_gray)
-                line_pts = []
-                ew_pts = []
-                for (ex,ey,ew,eh) in eyes:
-                    center = (ex + ew/2, ey + eh/2)
-                    axis = (10, 10)
-                    angle = 0
-                    startAngle = 0
-                    endAngle = 360
-                    color = (0,255,0)
-                    thickness = 2
-                    line_pts.append(center)
-                    ew_pts.append(ew/2)
-                    #cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
-                    cv2.ellipse(roi_color, center, axis, angle, startAngle, endAngle, color, thickness)
-
-                if (len(eyes) == 2):
-                    color = (0,255,0)
-                    if (line_pts[0][0] < line_pts[1][0]):
-                        line_pts[0] = (line_pts[0][0] + ew_pts[0], line_pts[0][1])
-                        line_pts[1] = (line_pts[1][0] - ew_pts[1], line_pts[1][1])
-                    else: 
-                        line_pts[1] = (line_pts[1][0] + ew_pts[1], line_pts[1][1])
-                        line_pts[0] = (line_pts[0][0] - ew_pts[0], line_pts[0][1])
-                    cv2.line(roi_color, line_pts[0], line_pts[1], color, 4)
+            detectFace(image)
         
         cv2.imshow("Frame", image)
         #cv2.waitKey(0)
@@ -132,6 +135,10 @@ def take_picture():
     # on_button = GPIO.input(18)
     # if on_button == False:
     #     videofeed_on()
+
+    #cv2.imwrite(image, output)
+
+
 
 def next_filter():
     print "add next filter"
