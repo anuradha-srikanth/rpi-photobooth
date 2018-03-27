@@ -34,16 +34,17 @@ time.sleep(0.1)
 def videofeed_on():
     print "videofeed on"
 
-    face_cascade = cv.CascadeClassifier('haarcascade_frontalface_default.xml')
-    eye_cascade = cv.CascadeClassifier('haarcascade_eye.xml')
-    gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+    eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
 
     # capture frames from the camera
     for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
         # grab the raw NumPy array representing the image, 
         # then initialize the timestamp
         # and occupied/unoccupied text
+
         image = frame.array
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         # show the frame
         faces = face_cascade.detectMultiScale(gray, 1.3, 5)
