@@ -87,6 +87,7 @@ def videofeed_on():
         # and occupied/unoccupied text
 
         image = frame.array
+        demo(image, )
         # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         # # show the frame
