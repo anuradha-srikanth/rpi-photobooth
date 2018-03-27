@@ -33,7 +33,7 @@ time.sleep(0.1)
 
 
 #there is also a video preview in the camera variable to show live feed
-def videofeed_on():
+def videofeed_on(filter_on = False):
     print "videofeed on"
 
     face_cascade = cv2.CascadeClassifier('haarcascades/haarcascade_frontalface_default.xml')
@@ -46,19 +46,21 @@ def videofeed_on():
         # and occupied/unoccupied text
 
         image = frame.array
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-        # show the frame
-        faces = face_cascade.detectMultiScale(gray, 1.3, 5) 
-        print len(faces)
-        for (x,y,w,h) in faces:
-            cv2.rectangle(image,(x,y),(x+w,y+h),(255,0,0),2)
-            roi_gray = gray[y:y+h, x:x+w]
-            roi_color = image[y:y+h, x:x+w]
-            eyes = eye_cascade.detectMultiScale(roi_gray)
-            for (ex,ey,ew,eh) in eyes:
-                cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
-        
+        if filter_on:
+            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+            # show the frame
+            faces = face_cascade.detectMultiScale(gray, 1.3, 5) 
+            print len(faces)
+            for (x,y,w,h) in faces:
+                cv2.rectangle(image,(x,y),(x+w,y+h),(255,0,0),2)
+                roi_gray = gray[y:y+h, x:x+w]
+                roi_color = image[y:y+h, x:x+w]
+                eyes = eye_cascade.detectMultiScale(roi_gray)
+                for (ex,ey,ew,eh) in eyes:
+                    cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
+            
         cv2.imshow("Frame", image)
         #cv2.waitKey(0)
         #cv2.destroyAllWindows()
@@ -74,6 +76,9 @@ def videofeed_on():
             '''
         capture_button = GPIO.input(20);
         if capture_button == False: break
+
+        filter_button = GPIO.input(4)
+        if filter_button == False: videofeed_on(True)
 
 def take_picture():
     print "picture should be captured"
