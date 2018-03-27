@@ -19,9 +19,9 @@ GPIO.setup(20, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 ''' initialize the camera and grab a reference 
 to the raw camera capture'''
 camera = PiCamera()
-camera.resolution = (640, 480)
+camera.resolution = (320, 240)
 camera.framerate = 32
-rawCapture = PiRGBArray(camera, size=(640, 480))
+rawCapture = PiRGBArray(camera, size=(320, 240))
 # edit this to point to an actual location
 url = "/home/pi/Documents/rpi-photobooth/pictures"
 output = strftime(url + "/image-%d-%m %H:%M.png", gmtime())
@@ -34,8 +34,8 @@ time.sleep(0.1)
 def videofeed_on():
     print "videofeed on"
 
-    face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-    eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
+    face_cascade = cv2.CascadeClassifier('haarcascades/haarcascade_frontalface_default.xml')
+    eye_cascade = cv2.CascadeClassifier('haarcascades/haarcascade_eye.xml')
 
     # capture frames from the camera
     for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
@@ -50,9 +50,9 @@ def videofeed_on():
         faces = face_cascade.detectMultiScale(gray, 1.3, 5) 
         print len(faces)
         for (x,y,w,h) in faces:
-            cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
+            cv2.rectangle(image,(x,y),(x+w,y+h),(255,0,0),2)
             roi_gray = gray[y:y+h, x:x+w]
-            roi_color = img[y:y+h, x:x+w]
+            roi_color = image[y:y+h, x:x+w]
             eyes = eye_cascade.detectMultiScale(roi_gray)
             for (ex,ey,ew,eh) in eyes:
                 cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
