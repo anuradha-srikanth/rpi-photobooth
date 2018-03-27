@@ -15,6 +15,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(20, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
+
 #on_button = GPIO.input(18)
 #capture_button = GPIO.input(20)
 
