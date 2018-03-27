@@ -51,6 +51,7 @@ def videofeed_on():
         image = frame.array
 
         if filter_on:
+            
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
             # show the frame
@@ -61,9 +62,31 @@ def videofeed_on():
                 roi_gray = gray[y:y+h, x:x+w]
                 roi_color = image[y:y+h, x:x+w]
                 eyes = eye_cascade.detectMultiScale(roi_gray)
+                line_pts = []
+                ew_pts = []
                 for (ex,ey,ew,eh) in eyes:
-                    cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
-            
+                    center = (ex + ew/2, ey + eh/2)
+                    axis = (10, 10)
+                    angle = 0
+                    startAngle = 0
+                    endAngle = 360
+                    color = (0,255,0)
+                    thickness = 2
+                    line_pts.append(center)
+                    ew_pts.append(ew/2)
+                    #cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
+                    cv2.ellipse(roi_color, center, axis, angle, startAngle, endAngle, color, thickness)
+
+                if (len(eyes) == 2):
+                    color = (0,255,0)
+                    if (line_pts[0][0] < line_pts[1][0]):
+                        line_pts[0] = (line_pts[0][0] + ew_pts[0], line_pts[0][1])
+                        line_pts[1] = (line_pts[1][0] - ew_pts[1], line_pts[1][1])
+                    else: 
+                        line_pts[1] = (line_pts[1][0] + ew_pts[1], line_pts[1][1])
+                        line_pts[0] = (line_pts[0][0] - ew_pts[0], line_pts[0][1])
+                    cv2.line(roi_color, line_pts[0], line_pts[1], color, 4)
+        
         cv2.imshow("Frame", image)
         #cv2.waitKey(0)
         #cv2.destroyAllWindows()
