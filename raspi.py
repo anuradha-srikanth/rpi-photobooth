@@ -40,12 +40,13 @@ def detectFace(image):
     eye_cascade = cv2.CascadeClassifier('haarcascades/haarcascade_eye.xml')
             
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray = cv2.equalizeHist(gray)
 
     # show the frame
     faces = face_cascade.detectMultiScale(gray, 1.3, 5) 
     print len(faces)
     for (x,y,w,h) in faces:
-        cv2.rectangle(image,(x,y),(x+w,y+h),(255,0,0),2)
+        #cv2.rectangle(image,(x,y),(x+w,y+h),(255,0,0),2)
         roi_gray = gray[y:y+h, x:x+w]
         roi_color = image[y:y+h, x:x+w]
         eyes = eye_cascade.detectMultiScale(roi_gray)
@@ -64,7 +65,12 @@ def detectFace(image):
             #cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
             cv2.ellipse(roi_color, center, axis, angle, startAngle, endAngle, color, thickness)
 
-            if (len(eyes) == 2):
+            print "Checking for length of eyes found >>>"            
+            print len(eyes)
+            print len(line_pts)
+            print len(line_pts[0])
+
+            if (len(line_pts) >= 2 and len(line_pts[0]) == 2):
                 color = (0,255,0)
                 if (line_pts[0][0] < line_pts[1][0]):
                     line_pts[0] = (line_pts[0][0] + ew_pts[0], line_pts[0][1])
@@ -115,13 +121,13 @@ def take_picture():
 
     # grab an image from the camera
     camera.capture(rawCapture, format="bgr")
-    if output:
-        print "Picture saved"
-        camera.capture(output)
+    #if output:
+    #    print "Picture saved"
+    #    camera.capture(output)
     image = rawCapture.array
 
     # display the image on screen and wait for a keypress
-    cv2.imshow("Image", image)
+    #cv2.imshow("Image", image)
     #capture_button = GPIO.input(20)
     #while capture_button:
     #    capture_button = GPIO.input(20)
@@ -136,7 +142,10 @@ def take_picture():
     # if on_button == False:
     #     videofeed_on()
 
-    #cv2.imwrite(image, output)
+    
+    detectFace(image)
+    if output:
+        cv2.imwrite(output, image)
 
 
 
