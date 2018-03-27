@@ -57,7 +57,8 @@ def videofeed_on():
             roi_color = image[y:y+h, x:x+w]
             eyes = eye_cascade.detectMultiScale(roi_gray)
             for (ex,ey,ew,eh) in eyes:
-                cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
+                #cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
+                cv2.ellipse(roi_color,(ex+(ew*1.0)/2,ey+(eh*1.0)/2),100,4,8,12,(0,255,0))
         
         cv2.imshow("Frame", image)
         #cv2.waitKey(0)
