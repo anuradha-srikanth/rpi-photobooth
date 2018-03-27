@@ -59,7 +59,7 @@ def videofeed_on():
         cv2.imshow("Frame", image)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
-        key = cv2.waitKey(1) & 0xFF
+        key     = cv2.waitKey(1) & 0xFF
 
         # clear the stream in preparation for the next frame
         rawCapture.truncate(0)
